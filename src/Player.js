@@ -1,7 +1,10 @@
 class Player {
-  constructor(username, paddleCoordinates) {
+  constructor(username, id, paddle) {
     this.username = username;
+    this.id = id;
     this.score = 0;
-    this.paddleCoordinates = paddleCoordinates;
+    this.paddle = paddle;
   }
+
+  // movePaddle(event) {}
 }
