@@ -1,3 +1,5 @@
+import Player from "./Player";
+
 class Game {
   constructor(player1, player2, pongBall, gameCode) {
     this.player1 = player1;
@@ -7,3 +9,5 @@ class Game {
     this.gameCode = gameCode;
   }
 }
+
+export default Game;

@@ -1,3 +1,5 @@
+import GamePiece from "./GamePiece";
+
 class Player {
   constructor(username, id, paddle) {
     this.username = username;
@@ -8,3 +10,5 @@ class Player {
 
   // movePaddle(event) {}
 }
+
+export default Player;

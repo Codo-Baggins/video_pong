@@ -6,4 +6,4 @@ class GamePiece {
   }
 }
 
-// module.exports = GamePiece;
+export default GamePiece;
