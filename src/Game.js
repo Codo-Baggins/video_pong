@@ -93,11 +93,9 @@ const Game = (props) => {
 
   const drawGameState = () => {
     eraseCanvas();
-
     drawBall(250, 250, 1, 1);
     drawPaddle(player1Paddle);
     drawPaddle(player2Paddle);
-    animateScene();
   };
 
   const eraseCanvas = () => {
@@ -105,7 +103,8 @@ const Game = (props) => {
   };
 
   const animateScene = () => {
-    requestAnimationFrame(() => drawGameState());
+    drawGameState();
+    requestAnimationFrame(() => animateScene());
   };
 
   const handleKeydown = (event) => {
