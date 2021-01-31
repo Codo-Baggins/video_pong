@@ -70,9 +70,6 @@ const Game = (props) => {
   const startGame = () => {
     createGame();
     if (pongBall) {
-      drawBall(pongBall);
-      drawPaddle(player1Paddle);
-      drawPaddle(player2Paddle);
       animateScene();
     }
   };
@@ -91,11 +88,16 @@ const Game = (props) => {
     context.stroke();
   };
 
+  let i = 0;
   const drawGameState = () => {
+    i++;
     eraseCanvas();
-    drawBall(250, 250, 1, 1);
+    drawBall(i, i, 1, 1);
     drawPaddle(player1Paddle);
     drawPaddle(player2Paddle);
+    if (i === 500) {
+      i = 0;
+    }
   };
 
   const eraseCanvas = () => {
@@ -109,12 +111,16 @@ const Game = (props) => {
 
   const handleKeydown = (event) => {
     console.log(event.key);
-    const key = event.code;
+    const key = event.key;
     if (key === "ArrowLeft") {
-      player1Paddle[0] += -10;
+      if (player1Paddle[0] > 5) {
+        player1Paddle[0] += -10;
+      }
       setPlayer1Paddle(player1Paddle);
     } else if (key === "ArrowRight") {
-      player1Paddle[0] += 10;
+      if (player1Paddle[0] < 460) {
+        player1Paddle[0] += 10;
+      }
       setPlayer1Paddle(player1Paddle);
     } else if (key === "z") {
       player2Paddle[0] += -10;
@@ -123,6 +129,7 @@ const Game = (props) => {
       player2Paddle[0] += 10;
       setPlayer2Paddle(player2Paddle);
     }
+    console.log(player1Paddle, player2Paddle);
   };
 
   return (
