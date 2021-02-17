@@ -1,145 +1,172 @@
-// import Player from "./Player";
-import React, { Component, useState, useRef, useEffect } from "react";
-// import GamePiece from "./GamePiece";
-// import { create } from "istanbul-reports";
+import React, { Component } from "react";
+import Canvas from "./Canvas";
 
-const Game = (props) => {
-  let [player1, setPlayer1] = useState(null);
-  let [player2, setPlayer2] = useState(null);
-  let [player1Paddle, setPlayer1Paddle] = useState(null);
-  let [player2Paddle, setPlayer2Paddle] = useState(null);
-  let [pongBall, setPongBall] = useState(null);
-  let [round, setRound] = useState(1);
-  let [gameCode, setGameCode] = useState(null);
-  let [context, setContext] = useState(null);
-  let gameBoard = useRef(null);
+class Game extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      player1: { name: null, id: null, paddle: [250, 480] },
+      player2: { name: null, id: null, paddle: [250, 20] },
+      pongBall: [250, 250],
+      round: 0,
+      gameCode: null,
+    };
+  }
 
-  // const pongBall = new GamePiece(250, 250, "ball");
-  // const player1Paddle = new GamePiece(233, 480, "paddle");
-  // const player2Paddle = new GamePiece(233, 20, "paddle");
+  updateAnimationState = () => {
+    // this.setState((prevState) => ({
+    //   pongBall: [prevState.pongBall[0] + 1, prevState.pongBall[1] + 1],
+    // }));
+    this.animateScene();
+    requestAnimationFrame(this.updateAnimationState);
+  };
 
-  const createPlayer = (username, id, x, y) => {
+  createPlayer = (username, id, x, y) => {
     const player = {
       username: username,
       id: id,
       score: 0,
+      paddle: [x, y],
     };
-    if (player1) {
-      setPlayer2(player);
-      setPlayer2Paddle([x, y]);
+    if (this.state.player1) {
+      this.setState(() => ({
+        player2: player,
+      }));
     } else {
-      setPlayer1(player);
-      setPlayer1Paddle([x, y]);
+      this.setState(() => ({
+        player1: player,
+      }));
     }
   };
 
-  const createGameSettings = (x, y) => {
+  createGameSettings = (x, y) => {
     const pongBall = [x, y];
-    setPongBall(pongBall);
+    this.setState({ pongBall: pongBall });
+
     // setGameCode(gameCode);
   };
 
-  const createGame = () => {
-    createGameSettings(250, 250);
-    createPlayer("Jon", 1, 233, 20);
-    // createPlayer("Joe", 2, 250, 480);
-
-    props.setGame({
-      player1: player1,
-      player2: player2,
-      pongBall: pongBall,
-      round: round,
-      gameCode: gameCode,
-    });
+  createGame = () => {
+    this.createGameSettings(250, 250);
+    this.createPlayer("Jon", 1, 233, 480);
+    this.createPlayer("Joe", 2, 250, 20);
   };
 
-  useEffect(() => {
-    setGameCode(props.gameCode);
-    if (gameBoard.current) {
-      const context = gameBoard.current.getContext("2d");
-      context.fillStyle = "skyblue";
-      context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-      setContext(context);
-    }
-  }, []);
-
-  useEffect(() => {
-    createPlayer("Joe", 2, 233, 480);
-  }, [player1]);
-
-  const startGame = () => {
-    createGame();
-    if (pongBall) {
-      animateScene();
+  startGame = () => {
+    this.createGame();
+    requestAnimationFrame(this.updateAnimationState);
+    if (this.pongBall) {
+      debugger;
+      // this.animateScene();
     }
   };
 
-  const drawBall = (prevX, prevY, dx, dy) => {
-    context.beginPath();
-    context.arc(prevX + dx, prevY + dy, 10, 180, 360);
-    context.stroke();
-    context.closePath();
+  animateScene = () => {
+    this.incrementBallPosition();
   };
 
-  const drawPaddle = (playerPaddle) => {
-    context.beginPath();
-    context.rect(playerPaddle[0], playerPaddle[1], 35, 10);
-    context.closePath();
-    context.stroke();
-  };
+  incrementBallPosition = () => {
+    let maxX = this.state.player1.paddle[0] + 17;
+    let minX = this.state.player1.paddle[0] - 17;
 
-  let i = 0;
-  const drawGameState = () => {
-    i++;
-    eraseCanvas();
-    drawBall(i, i, 1, 1);
-    drawPaddle(player1Paddle);
-    drawPaddle(player2Paddle);
-    if (i === 500) {
-      i = 0;
+    let minY = this.state.player1.paddle[1] + 10;
+    // let ballX = this.state.pongBall[0];
+    // let ballY = this.state.pongBall[1];
+    if (
+      this.state.pongBall[0] < maxX &&
+      this.state.pongBall[0] > minX &&
+      minY === this.state.pongBall[1]
+    ) {
+      debugger;
+      this.setState((prevState) => ({
+        pongBall: [prevState.pongBall[1] - 1, prevState.pongBall[0]],
+      }));
+    } else {
+      this.setState((prevState) => ({
+        pongBall: [prevState.pongBall[0] + 1, prevState.pongBall[1] + 1],
+      }));
+    }
+    // this.detectCollision();
+    if (this.state.pongBall[1] >= 500) {
+      this.setState((prevState) => ({
+        pongBall: [0, 500 - prevState.pongBall[0]],
+      }));
     }
   };
 
-  const eraseCanvas = () => {
-    context.clearRect(0, 0, 500, 500);
-  };
-
-  const animateScene = () => {
-    drawGameState();
-    requestAnimationFrame(() => animateScene());
-  };
-
-  const handleKeydown = (event) => {
+  handleKeydown = (event) => {
     console.log(event.key);
+    console.dir({
+      paddle1: this.state.player1.paddle,
+      paddle2: this.state.player2.paddle,
+    });
     const key = event.key;
     if (key === "ArrowLeft") {
-      if (player1Paddle[0] > 5) {
-        player1Paddle[0] += -10;
-      }
-      setPlayer1Paddle(player1Paddle);
+      this.setState((prevState) => ({
+        player1: {
+          ...prevState.player1,
+          paddle: [
+            prevState.player1.paddle[0] - 10,
+            prevState.player1.paddle[1],
+          ],
+        },
+      }));
     } else if (key === "ArrowRight") {
-      if (player1Paddle[0] < 460) {
-        player1Paddle[0] += 10;
-      }
-      setPlayer1Paddle(player1Paddle);
+      this.setState((prevState) => ({
+        player1: {
+          ...prevState.player1,
+          paddle: [
+            prevState.player1.paddle[0] + 10,
+            prevState.player1.paddle[1],
+          ],
+        },
+      }));
     } else if (key === "z") {
-      player2Paddle[0] += -10;
-      setPlayer2Paddle(player2Paddle);
+      this.setState((prevState) => ({
+        player2: {
+          ...prevState.player2,
+          paddle: [
+            prevState.player2.paddle[0] - 10,
+            prevState.player2.paddle[1],
+          ],
+        },
+      }));
     } else if (key === "x") {
-      player2Paddle[0] += 10;
-      setPlayer2Paddle(player2Paddle);
+      this.setState((prevState) => ({
+        player2: {
+          ...prevState.player2,
+          paddle: [
+            prevState.player2.paddle[0] + 10,
+            prevState.player2.paddle[1],
+          ],
+        },
+      }));
     }
-    console.log(player1Paddle, player2Paddle);
   };
 
-  return (
-    <div tabIndex='0' onKeyDown={(event) => handleKeydown(event)}>
-      <button id='draw-button' onClick={() => startGame()}>
-        Click me twice to start animation?
-      </button>
-      <canvas id='canvas' width='500' height='500' ref={gameBoard}></canvas>
-    </div>
-  );
-};
+  detectCollision = (i) => {
+    i = i;
+    if (this.state.pongBall[0] + 11 === this.state.player1.paddle[0]) {
+      i++;
+    } else {
+      i--;
+    }
+  };
+
+  render() {
+    return (
+      <div tabIndex='0' onKeyDown={(event) => this.handleKeydown(event)}>
+        <button id='draw-button' onClick={() => this.startGame()}>
+          Click me twice to start animation?
+        </button>
+        <Canvas
+          gameState={this.state}
+          {...this.state}
+          gameBoard={this.gameBoard}
+        />
+      </div>
+    );
+  }
+}
 
 export default Game;
