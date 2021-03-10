@@ -121,109 +121,81 @@ class Game extends Component {
   detectCollision = (prevPos, newPos) => {
     let [player1PaddleX, player1PaddleY] = this.state.player1.paddle;
     let [player2PaddleX, player2PaddleY] = this.state.player2.paddle;
-
     let [ballX, ballY] = this.state.pongBall;
 
-    let player1RightEdge = player1PaddleX + 35;
+    let player1RightEdge = player1PaddleX + 30;
     let player1LeftEdge = player1PaddleX;
-    let player1PaddleSurface = player1PaddleY;
+    let player1PaddleTop = player1PaddleY;
     let player1PaddleBottom = player1PaddleY + 10;
 
-    let player2RightEdge = player2PaddleX + 35;
+    let player2RightEdge = player2PaddleX + 30;
     let player2LeftEdge = player2PaddleX;
-    let player2PaddleSurface = player2PaddleY + 20;
+    let player2PaddleTop = player2PaddleY + 10;
     let player2PaddleBottom = player2PaddleY;
-
+    
     let surface;
 
     if (
-      (ballX < player1RightEdge &&
-        ballX > player1LeftEdge &&
-        player1PaddleSurface === ballY) ||
+      (ballX - 10 <= player1RightEdge &&
+        ballX + 10 >= player1LeftEdge &&
+        player1PaddleTop === ballY + 10) ||
       ballY === 490
     ) {
       surface = "bottom";
     } else if (
-      (ballX < player2RightEdge &&
-        ballX > player2LeftEdge &&
-        player2PaddleSurface === ballY) ||
+      (ballX - 10 <= player2RightEdge &&
+        ballX + 10 >= player2LeftEdge &&
+        player2PaddleTop === ballY - 10) ||
       ballY === 10
     ) {
       surface = "top";
     } else if (
       ballX === 10 ||
-      (ballX - 10 === player1RightEdge &&
-        ballY > player1PaddleSurface &&
-        ballY < player1PaddleBottom) ||
-      (ballX - 10 === player2RightEdge &&
-        ballY < player2PaddleSurface &&
-        ballY > player2PaddleBottom)
+      (ballX - 10 <= player1RightEdge &&
+        ballX >= player1RightEdge &&
+        ballY + 10 >= player1PaddleTop &&
+        ballY - 10 <= player1PaddleBottom) ||
+      (ballX - 10 <= player2RightEdge &&
+        ballX >= player2RightEdge &&
+        ballY + 10 >= player2PaddleTop &&
+        ballY - 10 <= player2PaddleBottom)
     ) {
       surface = "left";
     } else if (
       ballX === 490 ||
-      (ballX === player1LeftEdge &&
-        ballY > player1PaddleSurface &&
-        ballY < player1PaddleBottom) ||
-      (ballX + 10 === player2LeftEdge &&
-        ballY < player2PaddleSurface &&
-        ballY > player2PaddleBottom)
+      (ballX + 10 >= player1LeftEdge &&
+        ballX <= player1LeftEdge &&
+        ballY + 10 >= player1PaddleTop &&
+        ballY - 10 <= player1PaddleBottom) ||
+      (ballX + 10 >= player2LeftEdge &&
+        ballX <= player2LeftEdge &&
+        ballY + 10 >= player2PaddleTop &&
+        ballY - 10 <= player2PaddleBottom)
     ) {
       surface = "right";
     }
 
-    const [x, y] = this.determineCollisionAngle(surface);
+    this.updateBallDirection(surface);
+  };
 
+  updateBallDirection = (surface) => {
+    const [x, y] = this.calculateBallDirection(surface);
     this.setState({ ballDirection: [x, y] });
   };
 
-  // calculateReflectionAngle
-
-  // updateReflectionAngle
-
-  determineCollisionAngle = (surface) => {
+  calculateBallDirection = (surface) => {
     const [xDirection, yDirection] = this.state.ballDirection;
-
-    // let contactAngle;
-    // contactAngle = Math.atan(xDirection / yDirection);
-
-    // let reflectionAngle = contactAngle - Math.PI;
-    // let newDirection = Math.tan(reflectionAngle);
 
     switch (surface) {
       default:
         return [xDirection, yDirection];
       case "top":
-        console.log("top");
-        console.log(
-          this.state.pongBall,
-          this.state.player1.paddle,
-          this.state.player2.paddle
-        );
         return [xDirection, yDirection * -1];
       case "bottom":
-        console.log("bottom");
-        console.log(
-          this.state.pongBall,
-          this.state.player1.paddle,
-          this.state.player2.paddle
-        );
         return [xDirection, yDirection * -1];
       case "left":
-        console.log("left");
-        console.log(
-          this.state.pongBall,
-          this.state.player1.paddle,
-          this.state.player2.paddle
-        );
         return [xDirection * -1, yDirection];
       case "right":
-        console.log(
-          this.state.pongBall,
-          this.state.player1.paddle,
-          this.state.player2.paddle
-        );
-        console.log("right");
         return [xDirection * -1, yDirection];
     }
   };
@@ -233,7 +205,7 @@ class Game extends Component {
       <body>
         <div tabIndex='0' onKeyDown={(event) => this.handleKeydown(event)}>
           <button id='draw-button' onClick={() => this.startGame()}>
-            Click me twice to start game!
+            Click once to start game, multiple times to speed up ball.
           </button>
           <Canvas
             // gameState={this.state}
