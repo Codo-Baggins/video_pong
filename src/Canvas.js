@@ -13,8 +13,8 @@ class Canvas extends Component {
 
   drawBall = (context) => {
     context.beginPath();
-    context.arc(this.props.pongBall[0], this.props.pongBall[1], 10, 180, 360);
-    context.fillStyle = "black";
+    context.arc(this.props.pongBall[0], this.props.pongBall[1], 10, 0, 360);
+    context.fillStyle = "red";
     context.fill();
     context.stroke();
     context.closePath();
@@ -22,21 +22,28 @@ class Canvas extends Component {
 
   drawPaddle = (playerPaddle, context) => {
     context.beginPath();
-    context.rect(playerPaddle[0], playerPaddle[1], 35, 10);
+    context.rect(playerPaddle[0], playerPaddle[1], 30, 10);
     context.fillStyle = "black";
     context.fill();
     context.stroke();
     context.closePath();
   };
 
-  drawGameState = (context) => {
-    // this.props.detectCollision();
-    this.eraseCanvas(context);
+  drawGameBoard = (context) => {
     context.beginPath();
-    context.moveTo(250, 0);
-    context.lineTo(250, 500);
+    context.moveTo(0, 250);
+    context.lineTo(500, 250);
     context.stroke();
     context.closePath();
+    context.beginPath();
+    context.arc(250, 250, 50, 0, 360);
+    context.stroke();
+    context.closePath();
+  };
+
+  drawGameState = (context) => {
+    this.eraseCanvas(context);
+    this.drawGameBoard(context);
     this.drawBall(context);
     this.drawPaddle(this.props.player1.paddle, context);
     this.drawPaddle(this.props.player2.paddle, context);
