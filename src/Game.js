@@ -5,8 +5,8 @@ class Game extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      player1: { name: null, id: null, paddle: [233, 480] },
-      player2: { name: null, id: null, paddle: [233, 10] },
+      player1: { name: null, id: null, paddle: [235, 480] },
+      player2: { name: null, id: null, paddle: [235, 10] },
       pongBall: [250, 250],
       ballDirection: [-1, -1],
       round: 0,
@@ -15,9 +15,6 @@ class Game extends Component {
   }
 
   updateAnimationState = () => {
-    // this.setState((prevState) => ({
-    //   pongBall: [prevState.pongBall[0] + 1, prevState.pongBall[1] + 1],
-    // }));
     this.animateScene();
     requestAnimationFrame(this.updateAnimationState);
   };
@@ -30,27 +27,26 @@ class Game extends Component {
       paddle: [x, y],
     };
     if (this.state.player1) {
-      this.setState(() => ({
+      this.setState({
         player2: player,
-      }));
+      });
     } else {
-      this.setState(() => ({
+      this.setState({
         player1: player,
-      }));
+      });
     }
   };
 
   createGameSettings = (x, y) => {
     const pongBall = [x, y];
     this.setState({ pongBall: pongBall });
-
     // setGameCode(gameCode);
   };
 
   createGame = () => {
     this.createGameSettings(250, 100);
-    // this.createPlayer("Jon", 1, 20, 480);
-    // this.createPlayer("Joe", 2, 250, 10);
+    this.createPlayer("Jon", 1, 235, 480);
+    this.createPlayer("Joe", 2, 235, 10);
   };
 
   startGame = () => {
@@ -118,7 +114,7 @@ class Game extends Component {
     }
   };
 
-  detectCollision = (prevPos, newPos) => {
+  detectCollision = () => {
     let [player1PaddleX, player1PaddleY] = this.state.player1.paddle;
     let [player2PaddleX, player2PaddleY] = this.state.player2.paddle;
     let [ballX, ballY] = this.state.pongBall;
@@ -132,7 +128,7 @@ class Game extends Component {
     let player2LeftEdge = player2PaddleX;
     let player2PaddleTop = player2PaddleY + 10;
     let player2PaddleBottom = player2PaddleY;
-    
+
     let surface;
 
     if (
@@ -207,12 +203,7 @@ class Game extends Component {
           <button id='draw-button' onClick={() => this.startGame()}>
             Click once to start game, multiple times to speed up ball.
           </button>
-          <Canvas
-            // gameState={this.state}
-            {...this.state}
-            // gameBoard={this.gameBoard}
-            detectCollision={this.detectCollision}
-          />
+          <Canvas {...this.state} />
         </div>
       </body>
     );

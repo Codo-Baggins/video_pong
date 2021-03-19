@@ -1,6 +1,6 @@
 # Video Pong
 
-Video Pong is a digital take on classic table tennis. This was created with ES6 JavaScript and the HTML5 Canvas API within a React.js framework.  
+Video Pong is a digital take on classic table tennis. This was created with ES6 JavaScript and the HTML5 Canvas API within a React framework.  
 
 ## Table of Contents
 
